@@ -1,10 +1,5 @@
 
-$LOAD_PATH << File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib'))
-
-require 'rubygems'
-
-require 'app-state'
-require 'ui-state'
+require 'model-state-objects/app-state'
 
 module ModelStateObjects
   

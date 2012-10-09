@@ -1,5 +1,6 @@
 
-require 'frozen-app-state'
+require 'model-state-objects/frozen-app-state'
+require 'model-state-objects/ui-state'
 
 module ModelStateObjects
   
