@@ -21,13 +21,14 @@ class UIStateExample2 < ModelStateObjects::UIState
     super(opts)
     def_transition :some_step, UIStateExample1
     def_transition :some_adding_step, UIStateExample1 do |st|
-      st.blah += 1 if st.blah < 2
+      st.invalid! if st.blah >= 2
+      st.blah += 1
     end
   end
   def _some_step
   end
   def _some_adding_step(str = 'asdf')
-    app_state.blah << str if app_state.blah.size < 2
+    app_state.blah << str
   end
 end
 
