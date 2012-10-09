@@ -16,6 +16,16 @@ module ModelStateObjects
       @transition_next_states = {}
     end
     
+    # override this with whatever checks are desired. this will be
+    # called whenever this state is transitioned to.
+    def on_entry
+    end
+    
+    # override this with whatever checks are desired. this will be
+    # called whenever this state is transitioned from.
+    def on_exit
+    end
+    
     # takes a transition name and a block.  the block takes a frozen
     # copy of the current AppState (in the form of FrozenAppState),
     # and creates a new FrozenAppState, which will be checked against
@@ -30,6 +40,7 @@ module ModelStateObjects
     end
     
     def transition(method, *args, &block)
+      on_exit
       
       next_app_state = app_state.freeze
       if @transition_blocks[method]
@@ -45,6 +56,7 @@ module ModelStateObjects
       
       app_state.ui_state = next_app_state.ui_state.new(:machine => self.machine)
       app_state.freeze.should == next_app_state
+      app_state.ui_state.on_entry
       
       machine
     end
