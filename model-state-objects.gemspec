@@ -7,7 +7,8 @@ Gem::Specification.new do |s|
   s.name = "Model State Objects"
   s.version = ModelStateObjects::VERSION
   
-  s.add_development_dependency "rspec", "~>2.5.0"
+  s.add_development_dependency "rspec", "~>2.11.0"
+  s.add_development_dependency "guard-rspec", "~>2.1.0"
   
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

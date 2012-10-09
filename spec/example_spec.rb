@@ -89,6 +89,7 @@ describe 'blah' do
     graph = machine.search
     graph.each do |vertex, edges|
       edges.each do |step, vertex2|
+        vertex.blah.should <= vertex2.blah
         puts "#{vertex.ui_state.to_s} #{vertex.blah} #{step} #{vertex2.ui_state.to_s} #{vertex2.blah}"
       end
     end

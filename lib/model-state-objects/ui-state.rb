@@ -60,17 +60,18 @@ module ModelStateObjects
     end
     
     def transition(method, *args, &block)
-      on_exit
+      sub_method = "_#{method}".to_sym
+      unless self.respond_to? sub_method
+        raise NoMethodError, "sub_method #{sub_method} does not exist"
+      end
       
       expected_next_app_state = estimate_next_app_state(method)
       unless expected_next_app_state.valid?
         raise ArgumentError, "transition #{method} is invalid from this state!"
       end
       
-      sub_method = "_#{method}".to_sym
-      unless self.respond_to? sub_method
-        raise NoMethodError, "sub_method #{sub_method} does not exist"
-      end
+      on_exit
+      
       self.send(sub_method, *args, &block)
       
       app_state.ui_state = expected_next_app_state.ui_state.new(:machine => self.machine)
