@@ -12,6 +12,7 @@ module ModelStateObjects
     end
     
     def ==(x)
+      return false unless x.kind_of? FrozenAppState
       self.ui_state.to_s == x.ui_state.to_s
     end
     
