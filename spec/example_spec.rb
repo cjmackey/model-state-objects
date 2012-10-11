@@ -7,90 +7,86 @@ require 'rubygems'
 
 require 'rspec'
 
-class UIStateExample1 < ModelStateObjects::UIState
+class BasicState < ModelStateObjects::UIState
   def initialize(opts={})
     super(opts)
-    def_transition :some_step, UIStateExample2
+    def_transition :open_adder, AddingLightbox
   end
-  def _some_step
+  def _open_adder
   end
 end
 
-class UIStateExample2 < ModelStateObjects::UIState
+class AddingLightbox < ModelStateObjects::UIState
   def initialize(opts={})
     super(opts)
-    def_transition :some_step, UIStateExample1
-    def_transition :some_adding_step, UIStateExample1 do |st|
-      st.invalid! if st.blah >= 2
-      st.blah += 1
+    def_transition :cancel, BasicState
+    def_transition :add_string, BasicState do |st|
+      if st.respond_to? :str_count
+        st.invalid! if st.str_count >= 2
+        st.str_count += 1
+      end
     end
   end
-  def _some_step
+  def _cancel
   end
-  def _some_adding_step(str = 'asdf')
-    app_state.blah << str
+  def _add_string(str = 'asdf')
+    app_state.strs << str
   end
 end
 
 class FrozenAppStateExample < ModelStateObjects::FrozenAppState
-  attr_accessor :blah
+  attr_accessor :str_count
   def ==(x)
-    super(x) && self.blah == x.blah
+    super(x) && self.str_count == x.str_count
   end
 end
 
 class AppStateExample < ModelStateObjects::AppState
-  attr_accessor :blah
+  attr_accessor :strs
   def initialize(*args)
     super(*args)
-    self.ui_state = UIStateExample1.new(:machine => @machine)
-    self.blah = []
+    self.ui_state = BasicState.new(:machine => @machine)
+    self.strs = []
   end
   def freeze
     tmp = super(:klass => FrozenAppStateExample)
-    tmp.blah = self.blah.size
+    tmp.str_count = self.strs.size
     tmp
   end
 end
 
-describe 'blah' do
-  it 'runs through this example' do
-    machine = ModelStateObjects::StateMachine.new(:initial_state => AppStateExample)
-    #machine.transitions[:some_step].should_not == nil
-    
-    machine.some_step
-    machine.freeze.ui_state.to_s.should == UIStateExample2.to_s
-    #machine.transitions[:some_step].should_not == nil
-    #machine.transitions[:some_other_step].should_not == nil
-    
-    machine.some_step
-    machine.freeze.ui_state.to_s.should == UIStateExample1.to_s
-    
-    machine.some_step
-    machine.freeze.ui_state.to_s.should == UIStateExample2.to_s
-    
-    machine.some_adding_step
-    machine.freeze.ui_state.to_s.should == UIStateExample1.to_s
-    machine.freeze.blah.should == 1
-    machine.blah.should == ['asdf']
-    
-    machine.some_step
-    machine.freeze.ui_state.to_s.should == UIStateExample2.to_s
-    
-    machine.some_adding_step('blah')
-    machine.freeze.ui_state.to_s.should == UIStateExample1.to_s
-    machine.freeze.blah.should == 2
-    machine.blah.should == ['asdf', 'blah']
-    
+describe AppStateExample do
+  before :each do
+    @machine = ModelStateObjects::StateMachine.new(:initial_state => AppStateExample)
+  end
+  
+  it 'can transition by calling a method of the same name' do
+    @machine.open_adder
+    @machine.freeze.ui_state.to_s.should == AddingLightbox.to_s
+    @machine.cancel
+    @machine.freeze.ui_state.to_s.should == BasicState.to_s
+  end
+  
+  it 'will make changes, and verify them' do
+    @machine.open_adder
+    @machine.add_string
+    @machine.freeze.str_count.should == 1
+    @machine.strs.should == ['asdf']
+  end
+  
+  it 'can chain methods representing multiple steps' do
+    @machine.open_adder.add_string.open_adder.add_string('blah')
+    @machine.freeze.str_count.should == 2
+    @machine.strs.should == ['asdf', 'blah']
   end
   
   it 'can map out the graph of states' do
     machine = ModelStateObjects::StateMachine.new(:initial_state => AppStateExample)
     graph = machine.search
-    graph.each do |vertex, edges|
+    graph.each do |vertex1, edges|
       edges.each do |step, vertex2|
-        vertex.blah.should <= vertex2.blah
-        puts "#{vertex.ui_state.to_s} #{vertex.blah} #{step} #{vertex2.ui_state.to_s} #{vertex2.blah}"
+        vertex1.str_count.should <= vertex2.str_count
+        puts "#{vertex1.ui_state.to_s} #{vertex1.str_count} #{step} #{vertex2.ui_state.to_s} #{vertex2.str_count}"
       end
     end
   end
