@@ -36,6 +36,10 @@ end
 
 class AppStateSummaryExample < ModelStateObjects::AppStateSummary
   attr_accessor :str_count
+  def initialize(app_state)
+    super(app_state)
+    self.str_count = app_state.strs.size
+  end
   def ==(x)
     super(x) && self.str_count == x.str_count
   end
@@ -45,26 +49,24 @@ class AppStateExample < ModelStateObjects::AppState
   attr_accessor :strs
   def initialize(*args)
     super(*args)
-    self.ui_state = BasicState.new(:machine => @machine)
     self.strs = []
-  end
-  def summarize
-    tmp = super(:klass => AppStateSummaryExample)
-    tmp.str_count = self.strs.size
-    tmp
   end
 end
 
 describe AppStateExample do
   before :each do
-    @machine = ModelStateObjects::StateMachine.new(:initial_state => AppStateExample)
+    @machine = ModelStateObjects::StateMachine.new(:app_state_class => AppStateExample,
+                                                   :initial_ui_state_class => BasicState,
+                                                   :app_state_summary_class => AppStateSummaryExample)
   end
   
   it 'can transition by calling a method of the same name' do
     @machine.open_adder
     @machine.summarize.ui_state_class.to_s.should == AddingLightbox.to_s
+    @machine.ui_state.is_a?(AddingLightbox).should == true
     @machine.cancel
     @machine.summarize.ui_state_class.to_s.should == BasicState.to_s
+    @machine.ui_state.is_a?(BasicState).should == true
   end
   
   it 'will make changes, and verify them' do
@@ -81,8 +83,7 @@ describe AppStateExample do
   end
   
   it 'can map out the graph of states' do
-    machine = ModelStateObjects::StateMachine.new(:initial_state => AppStateExample)
-    graph = machine.search
+    graph = @machine.search
     graph.each do |vertex1, edges|
       edges.each do |step, vertex2|
         vertex1.str_count.should <= vertex2.str_count

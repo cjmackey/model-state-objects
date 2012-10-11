@@ -8,7 +8,10 @@ module ModelStateObjects
     attr_accessor :app_state
     
     def initialize(opts={})
-      @app_state ||= opts[:initial_state].new(:machine => self)
+      ui_state = opts[:initial_ui_state_class].new(:machine => self)
+      @app_state = opts[:app_state_class].new(:machine => self,
+                                              :ui_state => ui_state,
+                                              :app_state_summary_class => opts[:app_state_summary_class])
       raise ArgumentError unless @app_state.kind_of? AppState
     end
     

@@ -5,8 +5,8 @@ module ModelStateObjects
     
     attr_accessor :ui_state_class
     
-    def initialize(opts={})
-      @ui_state_class = opts[:ui_state_class]
+    def initialize(app_state)
+      @ui_state_class = app_state.ui_state.class
       @valid = true
     end
     
