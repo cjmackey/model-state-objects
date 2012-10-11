@@ -18,7 +18,7 @@ module ModelStateObjects
     
     def summarize(opts={})
       klass = opts[:klass] || AppStateSummary
-      klass.new(:ui_state => @ui_state.class)
+      klass.new(:ui_state_class => @ui_state.class)
     end
     
   end

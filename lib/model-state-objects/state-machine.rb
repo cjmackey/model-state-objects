@@ -24,7 +24,7 @@ module ModelStateObjects
         next_layer = []
         current_layer.each do |vertex|
           edges[vertex] = {}
-          vertex.ui_state.new.transitions(vertex).each do |trans_name, st|
+          vertex.ui_state_class.new.transitions(vertex).each do |trans_name, st|
             edges[vertex][trans_name] = st
             found = false
             vertices.each do |v|

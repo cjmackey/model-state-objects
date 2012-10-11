@@ -62,9 +62,9 @@ describe AppStateExample do
   
   it 'can transition by calling a method of the same name' do
     @machine.open_adder
-    @machine.summarize.ui_state.to_s.should == AddingLightbox.to_s
+    @machine.summarize.ui_state_class.to_s.should == AddingLightbox.to_s
     @machine.cancel
-    @machine.summarize.ui_state.to_s.should == BasicState.to_s
+    @machine.summarize.ui_state_class.to_s.should == BasicState.to_s
   end
   
   it 'will make changes, and verify them' do
@@ -86,7 +86,7 @@ describe AppStateExample do
     graph.each do |vertex1, edges|
       edges.each do |step, vertex2|
         vertex1.str_count.should <= vertex2.str_count
-        puts "#{vertex1.ui_state.to_s} #{vertex1.str_count} #{step} #{vertex2.ui_state.to_s} #{vertex2.str_count}"
+        puts "#{vertex1.ui_state_class.to_s} #{vertex1.str_count} #{step} #{vertex2.ui_state_class.to_s} #{vertex2.str_count}"
       end
     end
   end

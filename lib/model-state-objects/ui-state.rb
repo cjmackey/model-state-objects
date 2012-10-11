@@ -48,15 +48,15 @@ module ModelStateObjects
       trans_hash
     end
     
-    def estimate_next_app_state(method, current_state=nil)
-      next_app_state = (current_state || app_state.summarize).clone
+    def estimate_next_app_state(method, current_state_summary=nil)
+      next_app_state_summary = (current_state_summary || app_state.summarize).clone
       if @transition_next_states[method]
-        next_app_state.ui_state = @transition_next_states[method]
+        next_app_state_summary.ui_state_class = @transition_next_states[method]
       end
       if @transition_blocks[method]
-        @transition_blocks[method].call(next_app_state)
+        @transition_blocks[method].call(next_app_state_summary)
       end
-      next_app_state
+      next_app_state_summary
     end
     
     def transition(method, *args, &block)
@@ -74,7 +74,7 @@ module ModelStateObjects
       
       self.send(sub_method, *args, &block)
       
-      app_state.ui_state = expected_next_app_state.ui_state.new(:machine => self.machine)
+      app_state.ui_state = expected_next_app_state.ui_state_class.new(:machine => self.machine)
       app_state.ui_state.on_entry
       app_state.summarize.should == expected_next_app_state
       
