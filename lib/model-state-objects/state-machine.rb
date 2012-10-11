@@ -16,12 +16,8 @@ module ModelStateObjects
       @app_state.send(method, *args, &block)
     end
     
-    def freeze
-      @app_state.freeze
-    end
-    
     def search
-      vertices = [self.freeze]
+      vertices = [self.summarize]
       edges = {}
       current_layer = vertices.clone
       while current_layer.size > 0

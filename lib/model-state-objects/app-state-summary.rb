@@ -1,9 +1,7 @@
 
-require 'rubygems'
-
 module ModelStateObjects
   
-  class FrozenAppState
+  class AppStateSummary
     
     attr_accessor :ui_state
     
@@ -13,7 +11,7 @@ module ModelStateObjects
     end
     
     def ==(x)
-      return false unless x.kind_of? FrozenAppState
+      return false unless x.kind_of? AppStateSummary
       self.ui_state.to_s == x.ui_state.to_s
     end
     

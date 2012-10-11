@@ -34,7 +34,7 @@ class AddingLightbox < ModelStateObjects::UIState
   end
 end
 
-class FrozenAppStateExample < ModelStateObjects::FrozenAppState
+class AppStateSummaryExample < ModelStateObjects::AppStateSummary
   attr_accessor :str_count
   def ==(x)
     super(x) && self.str_count == x.str_count
@@ -48,8 +48,8 @@ class AppStateExample < ModelStateObjects::AppState
     self.ui_state = BasicState.new(:machine => @machine)
     self.strs = []
   end
-  def freeze
-    tmp = super(:klass => FrozenAppStateExample)
+  def summarize
+    tmp = super(:klass => AppStateSummaryExample)
     tmp.str_count = self.strs.size
     tmp
   end
@@ -62,21 +62,21 @@ describe AppStateExample do
   
   it 'can transition by calling a method of the same name' do
     @machine.open_adder
-    @machine.freeze.ui_state.to_s.should == AddingLightbox.to_s
+    @machine.summarize.ui_state.to_s.should == AddingLightbox.to_s
     @machine.cancel
-    @machine.freeze.ui_state.to_s.should == BasicState.to_s
+    @machine.summarize.ui_state.to_s.should == BasicState.to_s
   end
   
   it 'will make changes, and verify them' do
     @machine.open_adder
     @machine.add_string
-    @machine.freeze.str_count.should == 1
+    @machine.summarize.str_count.should == 1
     @machine.strs.should == ['asdf']
   end
   
   it 'can chain methods representing multiple steps' do
     @machine.open_adder.add_string.open_adder.add_string('blah')
-    @machine.freeze.str_count.should == 2
+    @machine.summarize.str_count.should == 2
     @machine.strs.should == ['asdf', 'blah']
   end
   

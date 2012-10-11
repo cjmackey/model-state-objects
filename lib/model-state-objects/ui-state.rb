@@ -49,7 +49,7 @@ module ModelStateObjects
     end
     
     def estimate_next_app_state(method, current_state=nil)
-      next_app_state = (current_state || app_state.freeze).clone
+      next_app_state = (current_state || app_state.summarize).clone
       if @transition_next_states[method]
         next_app_state.ui_state = @transition_next_states[method]
       end
@@ -76,7 +76,7 @@ module ModelStateObjects
       
       app_state.ui_state = expected_next_app_state.ui_state.new(:machine => self.machine)
       app_state.ui_state.on_entry
-      app_state.freeze.should == expected_next_app_state
+      app_state.summarize.should == expected_next_app_state
       
       machine
     end
