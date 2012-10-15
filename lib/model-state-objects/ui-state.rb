@@ -14,6 +14,7 @@ module ModelStateObjects
       @transition_names = Set.new()
       @transition_blocks = {}
       @transition_next_states = {}
+      @transition_times = {}
     end
     
     # override this with whatever checks are desired. this will be
@@ -31,12 +32,15 @@ module ModelStateObjects
     # and creates a new FrozenAppState, which will be checked against
     # the next state after the transition is called.  the UIState
     # subclass should implement a method named the same name but with
-    # a leading underscore.
-    def def_transition(name, next_ui_state_class=nil, &block)
-      name = name.to_sym
+    # a leading underscore.  optionally, one can provide a time
+    # estimate, in seconds, for how long the transition will take on
+    # average.
+    def def_transition(name, next_ui_state_class=nil, transition_time=1.0, &block)
+      raise ArgumentError, 'Transition names must be symbols!' unless name.is_a? Symbol
       @transition_names << name
       @transition_blocks[name] = block
       @transition_next_states[name] = next_ui_state_class
+      @transition_times[name] = transition_time
     end
     
     def transitions(current_state=nil)
