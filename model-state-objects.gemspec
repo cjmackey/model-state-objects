@@ -5,6 +5,7 @@ require 'model-state-objects/version'
 
 Gem::Specification.new do |s|
   s.name = "model-state-objects"
+  s.summary = "Model State Objects!"
   s.version = ModelStateObjects::VERSION
   
   s.add_development_dependency "rspec", "~>2.11.0"
