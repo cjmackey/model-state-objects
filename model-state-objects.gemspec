@@ -7,6 +7,7 @@ Gem::Specification.new do |s|
   s.name = "model-state-objects"
   s.summary = "Model State Objects!"
   s.version = ModelStateObjects::VERSION
+  s.authors = "carl mackey"
   
   s.add_development_dependency "rspec", "~>2.11.0"
   s.add_development_dependency "guard-rspec", "~>2.1.0"
