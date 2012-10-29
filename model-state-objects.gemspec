@@ -4,7 +4,7 @@ $LOAD_PATH << File.expand_path(File.join(File.dirname(__FILE__), 'lib'))
 require 'model-state-objects/version'
 
 Gem::Specification.new do |s|
-  s.name = "Model State Objects"
+  s.name = "model-state-objects"
   s.version = ModelStateObjects::VERSION
   
   s.add_development_dependency "rspec", "~>2.11.0"
