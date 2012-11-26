@@ -64,6 +64,8 @@ module ModelStateObjects
     end
     
     def transition(method, *args, &block)
+      logger.debug("transitioning from #{self.class} using #{method}")
+      
       sub_method = "_#{method}".to_sym
       unless self.respond_to? sub_method
         raise NoMethodError, "sub_method #{sub_method} does not exist"
@@ -87,6 +89,9 @@ module ModelStateObjects
     
     def app_state
       machine.app_state
+    end
+    def logger
+      machine.logger
     end
     
     def method_missing(method, *args, &block)

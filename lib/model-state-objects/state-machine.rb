@@ -13,6 +13,7 @@ module ModelStateObjects
                                               :ui_state => ui_state,
                                               :app_state_summary_class => opts[:app_state_summary_class])
       raise ArgumentError unless @app_state.kind_of? AppState
+      @logger = opts[:logger]
     end
     
     def method_missing(method, *args, &block)
@@ -42,6 +43,10 @@ module ModelStateObjects
         current_layer = next_layer
       end
       edges
+    end
+    
+    def logger
+      @logger ||= Logger.new STDOUT
     end
     
   end
