@@ -64,17 +64,19 @@ module ModelStateObjects
     end
     
     def transition(method, *args, &block)
-      logger.debug("transitioning from #{self.class} using #{method}")
       
       sub_method = "_#{method}".to_sym
       unless self.respond_to? sub_method
-        raise NoMethodError, "sub_method #{sub_method} does not exist"
+        raise NoMethodError, "sub_method #{self.class}##{sub_method} does not exist"
       end
       
       expected_next_app_state = estimate_next_app_state(method)
       unless expected_next_app_state.valid?
-        raise ArgumentError, "transition #{method} is invalid from this state!"
+        raise ArgumentError, "transition #{method} is invalid from this state (#{self.class})!"
       end
+      
+      logger.debug("transitioning from #{self.class} using ##{method} " +
+                   "to #{expected_next_app_state.ui_state_class}")
       
       on_exit
       
