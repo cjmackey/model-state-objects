@@ -18,12 +18,12 @@ module ModelStateObjects
     end
     
     # override this with whatever checks are desired. this will be
-    # called whenever this state is transitioned to.
+    # called after this state is transitioned to.
     def on_entry
     end
     
     # override this with whatever checks are desired. this will be
-    # called whenever this state is transitioned from.
+    # called after this state is transitioned from.
     def on_exit
     end
     
@@ -78,9 +78,9 @@ module ModelStateObjects
       logger.debug("transitioning from #{self.class} using ##{method} " +
                    "to #{expected_next_app_state.ui_state_class}")
       
-      on_exit
-      
       self.send(sub_method, *args, &block)
+      
+      on_exit
       
       app_state.ui_state = expected_next_app_state.ui_state_class.new(:machine => self.machine)
       app_state.ui_state.on_entry
