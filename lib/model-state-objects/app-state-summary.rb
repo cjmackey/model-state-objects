@@ -12,12 +12,21 @@ module ModelStateObjects
     
     def ==(x)
       return false unless x.kind_of? AppStateSummary
-      self.ui_state_class.to_s == x.ui_state_class.to_s
+      (self <=> x) == 0
+    end
+    def ===(x)
+      self == x
+    end
+    
+    def <=>(x)
+      raise ArgumentError "#{x} is not a kind of AppStateSummary!" unless x.kind_of? AppStateSummary
+      self.ui_state_class.to_s <=> x.ui_state_class.to_s
     end
     
     def valid?
       @valid
     end
+    
     def invalid!
       @valid = false
     end

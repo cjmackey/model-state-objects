@@ -40,8 +40,8 @@ class AppStateSummaryExample < ModelStateObjects::AppStateSummary
     super(app_state)
     self.str_count = app_state.strs.size
   end
-  def ==(x)
-    super(x) && self.str_count == x.str_count
+  def <=>(x)
+    super(x) == 0 ? self.str_count <=> x.str_count : super(x)
   end
 end
 
